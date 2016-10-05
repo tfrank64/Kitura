@@ -1,23 +1,24 @@
 #! /bin/bash
 
-SCHEME=Kitura
+uname -a
+xcodebuild -version
+XCODEBUILD_INSTALLED=$?
 
-OS=`uname`
-if [[ $OS == "Darwin" ]]; then
-    XCODEBUILD_VERSION=`xcodebuild -version`
-    echo "Starting xcodebuild (${XCODEBUILD_VERSION}) on ${OS} SDK: ${TRAVIS_XCODE_SDK} SCHEME: ${TRAVIS_XCODE_SCHEME} PROJECT: ${TRAVIS_XCODE_PROJECT} WS: ${TRAVIS_XCODE_WORKSPACE}"
+if [[ $XCODEBUILD_INSTALLED != 0 ]]; then
+    echo "Skipping code coverage generation as xcodebuild not available on ${TRAVIS_OS_NAME}"
 else
-    echo "Skipping xcodebuild as not available on ${OS}"
-    exit 0
+    echo "Starting code coverage generation on ${TRAVIS_OS_NAME}"
+    XCODE_OUTPUT=`swift package generate-xcodeproj`
+    echo "$XCODE_OUTPUT"
+
+    PROJECT="${XCODE_OUTPUT##*/}"
+    SCHEME="${PROJECT%%.xcodeproj}"
+
+    TEST_CMD="xcodebuild -project $PROJECT -scheme $SCHEME -sdk macosx -enableCodeCoverage YES test"
+    echo "Running ${TEST_CMD}"
+    eval "${TEST_CMD}"
+
+    bash <(curl -s https://codecov.io/bash) -J "^${SCHEME}\$"
+    echo "Finished code coverage generation"
 fi
 
-swift package generate-xcodeproj
-PROJECT="${SCHEME}.xcodeproj"
-
-TEST_CMD="xcodebuild -project $PROJECT -scheme $SCHEME -sdk macosx -enableCodeCoverage YES test"
-echo "Running ${TEST_CMD}"
-eval "${TEST_CMD}"
-
-bash <(curl -s https://codecov.io/bash) -J "^${SCHEME}\$"
-
-echo "Finished xcodebuild on ${OS}"
