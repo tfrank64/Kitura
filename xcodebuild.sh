@@ -5,7 +5,7 @@ SCHEME=Kitura
 OS=`uname`
 if [[ $OS == "Darwin" ]]; then
     XCODEBUILD_VERSION=`xcodebuild -version`
-    echo "Starting xcodebuild (${XCODEBUILD_VERSION}) on ${OS}"
+    echo "Starting xcodebuild (${XCODEBUILD_VERSION}) on ${OS} SDK: ${TRAVIS_XCODE_SDK} SCHEME: ${TRAVIS_XCODE_SCHEME} PROJECT: ${TRAVIS_XCODE_PROJECT} WS: ${TRAVIS_XCODE_WORKSPACE}"
 else
     echo "Skipping xcodebuild as not available on ${OS}"
     exit 0
