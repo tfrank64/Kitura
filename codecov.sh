@@ -1,15 +1,24 @@
 #! /bin/bash
 
-echo "Starting code coverage generation"
-uname -a
-xcodebuild -version
-if [[ $? != 0 ]]; then
-    echo "Skipping code coverage generation as xcodebuild not available"
-    exit 1
+if [[ $TRAVIS && $TRAVIS_EVENT_TYPE != "cron" ]]; then
+    echo "Not cron build. Skipping code coverage generation"
+    exit 0
 fi
 
+if [[ $TRAVIS && $TRAVIS_OS_NAME != "osx" ]]; then
+    echo "Not osx build. Skipping code coverage generation"
+    exit 0
+fi
+
+echo "Starting code coverage generation"
+uname -a
+
 SDK=macosx
+xcodebuild -version
 xcodebuild -version -sdk $SDK
+if [[ $? != 0 ]]; then
+    exit 1
+fi
 
 PROJ_CMD="swift package generate-xcodeproj"
 echo "Running $PROJ_CMD"
