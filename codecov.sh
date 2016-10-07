@@ -1,9 +1,9 @@
 #! /bin/bash
 
-if [[ $TRAVIS && $TRAVIS_EVENT_TYPE != "cron" ]]; then
-    echo "Not cron build. Skipping code coverage generation"
-    exit 0
-fi
+#if [[ $TRAVIS && $TRAVIS_EVENT_TYPE != "cron" ]]; then
+#    echo "Not cron build. Skipping code coverage generation"
+#    exit 0
+#fi
 
 if [[ $TRAVIS && $TRAVIS_OS_NAME != "osx" ]]; then
     echo "Not osx build. Skipping code coverage generation"

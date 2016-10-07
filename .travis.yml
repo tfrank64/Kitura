@@ -23,7 +23,6 @@ matrix:
       sudo: required
     - os: osx
       osx_image: xcode8
-      language: objective-c
       sudo: required
 
 before_install:
