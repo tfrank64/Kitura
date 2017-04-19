@@ -41,6 +41,7 @@ class FileResourceServer {
     private func getFilePath(for resource: String) -> String? {
         let fileManager = FileManager.default
         var potentialResource = getResourcePathBasedOnSourceLocation(for: resource)
+        print("potentialResource: \(potentialResource)")
 
         if potentialResource.hasSuffix("/") {
             potentialResource += "index.html"
@@ -48,13 +49,16 @@ class FileResourceServer {
 
         let fileExists = fileManager.fileExists(atPath: potentialResource)
         if fileExists {
+            print("file exists")
             return potentialResource
         } else {
-            return getResourcePathBasedOnCurrentDirectory(for: resource, withFileManager: fileManager)
+            let val = getResourcePathBasedOnCurrentDirectory(for: resource, withFileManager: fileManager)
+            return val
         }
     }
 
     private func getResourcePathBasedOnSourceLocation(for resource: String) -> String {
+        print("#file: \(#file)")
         let fileName = NSString(string: #file)
         let resourceFilePrefixRange: NSRange
         let lastSlash = fileName.range(of: "/", options: .backwards)
@@ -70,6 +74,7 @@ class FileResourceServer {
         do {
             for suffix in ["/Packages", "/.build/checkouts"] {
                 let packagePath = fileManager.currentDirectoryPath + suffix
+                print("packPath: \(packagePath)")
                 let packages = try fileManager.contentsOfDirectory(atPath: packagePath)
                 for package in packages {
                     let potentialResource = "\(packagePath)/\(package)/Sources/Kitura/resources/\(resource)"
